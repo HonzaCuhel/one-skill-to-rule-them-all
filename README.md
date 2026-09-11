@@ -164,6 +164,7 @@ I would like to thank the following creators, platforms, publications, companies
 - DecimalAI: [https://app.decimal.ai/skills/rebelytics-task-observer](https://app.decimal.ai/skills/rebelytics-task-observer)
 - MigueBaenaIA: [https://www.youtube.com/shorts/OBeoYZzHDcw](https://www.youtube.com/shorts/OBeoYZzHDcw)
 - Santiago Cosme: [https://www.linkedin.com/posts/santiagocosme_5-skills-para-poner-90-ugcPost-7491131673254846465-SQAl/](https://www.linkedin.com/posts/santiagocosme_5-skills-para-poner-90-ugcPost-7491131673254846465-SQAl/)
+- Skillselion: [https://skillselion.com/guides/task-observer-skill-claude-code-guide](https://skillselion.com/guides/task-observer-skill-claude-code-guide)
 
 If I forgot to list your recommendation here, please let me know or submit it via a PR in the same format as the others.
 
