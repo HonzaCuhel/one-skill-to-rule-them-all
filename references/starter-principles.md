@@ -324,3 +324,20 @@ unexercised (see "Documenting an external tool surface" in
 scheme can describe a surface the file never mentions, and a skill can be
 accurate on every line it contains while accounting for roughly half of
 what the tool does.
+
+### 27. Every skill ships as a bundle and is structured for progressive disclosure, regardless of size
+**Applies to:** all skills, open-source and internal
+**Requirement:** A skill is a directory, delivered and installed as one
+bundle, whether it currently holds one file or twenty — there is no
+single-file delivery format. Its structure follows progressive disclosure
+from the first draft: SKILL.md carries the mental model, the rules that
+change behaviour on every invocation, and a pointer list with explicit
+load triggers; everything consulted only during one kind of episode (tool
+inventories, recipes, taxonomies, per-variant detail, gotcha catalogues,
+contract or clause extracts) lives in `references/`. A line-count
+threshold (around 500 lines) marks only the point at which an existing,
+not-yet-split skill gets retrofitted; it does not gate the structure of
+new or substantially revised work. Rationale: a rule that switches on
+artefact size creates two formats for one thing and a boundary every
+consumer must re-derive, and one format removes the bare-SKILL.md
+truncation class of install failures outright.

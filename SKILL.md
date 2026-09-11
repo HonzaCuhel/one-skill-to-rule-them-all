@@ -141,8 +141,8 @@ was handled without its reference loaded, log an observation.
    reconciliation**, due whenever
    `skill-observations/starter-principles-reviewed.txt` is absent or holds
    a starter-set version older than the one in
-   `references/starter-principles.md` (its first line carries
-   `Starter set version: N`) — which covers a fresh install, an existing
+   `references/starter-principles.md` (the `Starter set version: N` line
+   in its header, below the title) — which covers a fresh install, an existing
    install upgrading to a bundle that ships the file, and every later
    growth of the set. Load the starter file, match each starter entry
    against the adopter's existing principles by substance (a rule that
