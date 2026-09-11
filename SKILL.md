@@ -71,7 +71,20 @@ and its references takes that pinned absolute path, written
 `[ABSOLUTE PATH]` — substitute it when installing, exactly as in the
 activation block. A snippet run with a relative path from any other
 directory does not fail: it reports an empty, clean backlog, which is the
-one answer that never gets questioned.
+one answer that never gets questioned. **The substituted path routinely
+contains a space** — the default shared-folder name on at least one
+common install does — so every expansion of it stays double-quoted, and
+no snippet may feed it through word splitting (`for f in $(find …)`): a
+sweep that splits its own path at the space examines zero files, prints
+errors nobody reads, and lets the command it rides inside succeed.
+**Every snippet here is bash, not POSIX `sh`** — the archival sweep's
+`read -r -d ''` is a bash extension that `dash` and `ash` do not have, so
+under `sh` it fails as a usage error or, worse, as a loop that reads
+nothing and exits zero, which is the same silent success as the word
+split. A `bash` code fence states that to a human reader and to nothing
+else, so invoke the snippets with bash explicitly; where a loop happens to
+be POSIX-safe as well (the session-start scan), that is incidental and not
+a promise about the rest.
 
 ## Reference files — load on demand, not up front
 
@@ -183,13 +196,13 @@ was handled without its reference loaded, log an observation.
    rather than an error.
 
    ```bash
-   d="[ABSOLUTE PATH]/skill-observations/observation-log"   # the pinned workspace path — re-derive in EVERY call, never relative to the cwd
+   d="[ABSOLUTE PATH]/skill-observations/observation-log"   # the pinned workspace path — re-derive in EVERY call, never relative to the cwd; run under bash, not sh
    n=$(find "[ABSOLUTE PATH]/skill-observations/observation-log" -maxdepth 1 -name '*.md' | wc -l | tr -d ' ')  # literal path: independent of $d
    parsed=$(find "$d" -maxdepth 1 -name '*.md' -exec awk 'FNR==1 {if (/^---[[:space:]]*$/) print FILENAME; nextfile}' {} + | wc -l | tr -d ' ')
    suspect=$(find "$d" -maxdepth 1 -name '*.md' -exec awk 'FNR==1 && /^---[[:space:]]*$/ {fm=1; next}
      fm && /^---[[:space:]]*$/ {fm=0; nextfile}
      fm && /^[a-z_]+: [^"\047[|>].*: / {print FILENAME; nextfile}' {} + | wc -l | tr -d ' ')   # values with an unquoted ": " — invalid YAML
-   for f in $(find "$d" -maxdepth 1 -name '*.md' | sort); do
+   find "$d" -maxdepth 1 -name '*.md' | LC_ALL=C sort | while IFS= read -r f; do  # quote + IFS=: never word-split a path containing a space
      awk 'NR==1 && /^---[[:space:]]*$/ {fm=1; next}
           fm && /^---[[:space:]]*$/ {exit}
           fm' "$f"
@@ -200,7 +213,20 @@ was handled without its reference loaded, log an observation.
    fi
    [ "$suspect" -gt 0 ] && echo "NOTE: $suspect of $n headers carry an unquoted ': ' in a value — quote those values (File format)"
    printf 'files: %s  parsed: %s  suspect: %s\n' "$n" "$parsed" "$suspect"
+   printf '%s session-start scan: files=%s parsed=%s\n' "$(date +%F)" "$n" "$parsed" \
+     >> "[ABSOLUTE PATH]/skill-observations/checkpoints.log"   # the protocol's own trace
    ```
+
+   **The scan ends in a write, not only a print.** Loading this skill and
+   executing this protocol are two acts, and only the load leaves an
+   artefact in the transcript — which discharges the felt obligation, so a
+   session that loaded and then ran nothing looks from outside exactly
+   like one that did both. The appended `checkpoints.log` line is the
+   protocol's own trace, for the same reason the checkpoint rule is a
+   write: a step whose value lies in happening at a specific moment needs
+   its own entry in the tool record. (Where the workspace prices every
+   write — the exception under "How to Log" — fold this line into the
+   session's first write instead.)
 3. **Review trigger.** Read `skill-observations/last-review-date.txt`. The
    value carries the truth: a date = when the last review actually ran;
    `never` = no review has run yet. A missing file is abnormal (step 1
@@ -381,6 +407,18 @@ tool call; piggy-backing the flush onto them makes the write a side effect
 of work you were doing anyway. (Why both checkpoints are writes rather than
 questions: `references/observation-log.md`.)
 
+**A failed write to an external system is a flush trigger in its own
+right** — a tool result carrying `permission stream closed`, `permission
+denied`, or a harness interrupt. It is not a completion, but it has both
+properties the flush needs: it is a literal string in the tool record
+rather than a judgement about whether the moment qualifies, and it lands
+at the point where a run has just discovered something worth reporting and
+is therefore most likely to stop instead. Flush before doing anything else
+with the failure, including deciding what to do about it. (Observed: an
+unattended run completed every substantive step, took a permission error
+on its first write to an external system, and ended without a report or a
+logged observation.)
+
 **Two gaps this pairing still leaves — both observed across full working days
 in which nothing was logged at all.**
 
@@ -433,21 +471,25 @@ resolved files into `archive/` — archival is a side effect of deriving the
 id, not a separate duty (see Archival on Write):
 
 ```bash
-d="[ABSOLUTE PATH]/skill-observations/observation-log"   # the pinned workspace path, never relative to the cwd
+d="[ABSOLUTE PATH]/skill-observations/observation-log"   # the pinned workspace path, never relative to the cwd; it may contain a space, so keep it quoted; bash, not sh
 today=$(date +%F)          # archival rides inside this command (see below):
-for f in $(find "$d" -maxdepth 1 -name '*.md'); do   # stale resolved files move before the id is read
-  hdr=$(awk 'NR==1 && /^---[[:space:]]*$/ {fm=1; next}
-             fm && /^---[[:space:]]*$/ {exit} fm' "$f")
-  case $hdr in
-    *"status: actioned"*|*"status: declined"*|*"status: superseded"*) ;;
-    *) continue ;;
-  esac
-  r=$(printf '%s\n' "$hdr" | sed -n 's/^resolved:[[:space:]]*//p' | head -1)
-  case $r in [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]) ;; *) continue ;; esac
-  [ "$r" != "$today" ] && \
-    [ "$(printf '%s\n%s\n' "$r" "$today" | sort | head -1)" = "$r" ] && \
-    mv "$f" "$d/archive/"
-done
+n_files=$(find "$d" -maxdepth 1 -name '*.md' | wc -l | tr -d ' ')
+seen=$(find "$d" -maxdepth 1 -name '*.md' -print0 | { n=0   # -print0/-d '': never word-split a path containing a space — `read -d` is a bash extension, so this loop requires bash
+  while IFS= read -r -d '' f; do   # stale resolved files move before the id is read
+    n=$(( n + 1 ))
+    hdr=$(awk 'NR==1 && /^---[[:space:]]*$/ {fm=1; next}
+               fm && /^---[[:space:]]*$/ {exit} fm' "$f")
+    case $hdr in
+      *"status: actioned"*|*"status: declined"*|*"status: superseded"*) ;;
+      *) continue ;;
+    esac
+    r=$(printf '%s\n' "$hdr" | sed -n 's/^resolved:[[:space:]]*//p' | head -1)
+    case $r in [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]) ;; *) continue ;; esac
+    [ "$r" != "$today" ] && \
+      [ "$(printf '%s\n%s\n' "$r" "$today" | sort | head -1)" = "$r" ] && \
+      mv "$f" "$d/archive/"
+  done; printf %s "$n"; })
+[ "$n_files" -gt 0 ] && [ "${seen:-0}" -eq 0 ] && { echo "ARCHIVAL SWEEP BROKEN — $n_files files present, 0 examined"; exit 1; }
 hi=$( { ls "$d" "$d/archive" 2>/dev/null | grep -oE '^[0-9]+'; cat "$d/archive/.id-floor" 2>/dev/null; } \
      | sed 's/^0*\([0-9]\)/\1/' | sort -n | tail -1); : "${hi:=0}"
 [ "$hi" -eq 0 ] && [ -n "$(find "$d" -maxdepth 1 -name '*.md')" ] && { echo "ID COMMAND BROKEN — log is non-empty but no ids extracted"; exit 1; }
@@ -464,7 +506,12 @@ prefix containing an 8 or 9 errors out.
 
 The guard line distinguishes "the log says zero" from "I could not read
 the log": a command that fails to empty rather than to error would
-otherwise propose id 1 in a populated log. A new file never touches another entry's bytes, so it cannot truncate,
+otherwise propose id 1 in a populated log. The sweep carries the same
+guard in its own right — it counts the files it actually examined and
+halts if that count is zero while `find` reports files present. An
+archival loop that never enters its body moves nothing and exits
+successfully, so without the count "nothing was due for archival" and
+"the loop never ran" are the same output. A new file never touches another entry's bytes, so it cannot truncate,
 overwrite or renumber anyone else's work — provided it is a new file. If
 two parallel sessions pick the same id and different slugs, two files
 share a number — harmless; the next review renumbers one and logs a

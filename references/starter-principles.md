@@ -1,6 +1,6 @@
 # Starter Cross-Cutting Principles (optional seed)
 
-Starter set version: 1
+Starter set version: 2
 
 This file is NOT the adopter's principles file. It is an optional seed:
 a curated set of generic methodology principles, accumulated over a long
@@ -303,3 +303,24 @@ supporting reason transfers its unreliability to the sound claim beside
 it. Corollary: before building an argument on figures from a document,
 establish who authored them — inherited or third-party numbers deviate in
 both directions and change which of them are worth contesting at all.
+
+### 26. A companion skill must declare its coverage boundary
+**Applies to:** all skills that document a surface someone else owns — a
+tool, an MCP server, an API, a platform, a product — and any skill loaded
+as a companion to a base skill
+**Requirement:** State near the top which parts of the documented surface
+the skill covers and which it does not. A companion is loaded precisely
+because the agent does not know the tool, so the file's silence about a
+surface is read as the surface not existing rather than as the file being
+partial — and the load itself suppresses the exploration that would settle
+the difference. Name the uncovered areas explicitly, even as a bare list
+with no detail behind it; a named gap is a question the agent knows to
+ask, an unnamed one is not. Read in the other direction: an existing
+companion that declares no boundary has UNKNOWN coverage, not complete
+coverage, so verify against the product before concluding a feature is
+absent. Marking individual tools or endpoints as exercised versus
+unexercised (see "Documenting an external tool surface" in
+`references/skill-authoring.md`) does not substitute for this: no marking
+scheme can describe a surface the file never mentions, and a skill can be
+accurate on every line it contains while accounting for roughly half of
+what the tool does.
