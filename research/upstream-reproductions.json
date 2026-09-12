@@ -1,0 +1,97 @@
+{
+  "upstream_commit": "7518a858cf5b550bf3dc61b1b625f4cb0b5fa87f",
+  "python": "3.8.8",
+  "platform": "macOS-26.2-x86_64-i386-64bit",
+  "scope": "synthetic local repros only; no live agent efficacy evaluation",
+  "source_sha256": {
+    "SKILL.md": "0b583fd636c956f863cbaeb1338233731f8a4b80af6435c52264cd7a59ec0f4c",
+    "scripts/migrate-log.py": "aa2f3a05eb9d79a7833ded4c22ea62e0855d0bf62f56c279823ff036035f8279",
+    "scripts/validate-skill-bundle.py": "5c17f68fcc636f3b083be7bd93f3012b553fac714ec8c1e7545b3bed47f6e5e1"
+  },
+  "results": [
+    {
+      "id": "CONTROL_VALID",
+      "expected": "accept valid skill",
+      "observed_failures": [],
+      "control_passed": true
+    },
+    {
+      "id": "F01_LITERAL_DESCRIPTION",
+      "expected": "reject description longer than 1024",
+      "observed_failures": [],
+      "reproduced": true,
+      "actual_description_chars_without_final_newline": 1100,
+      "regex_measured_chars": 1
+    },
+    {
+      "id": "CONTROL_LONG_INLINE",
+      "observed_failures": [
+        "description 1100 chars > cap 1024"
+      ],
+      "control_passed": true
+    },
+    {
+      "id": "F02_TRANSITIVE_REFERENCE",
+      "expected": "reject missing bundled reference reachable through another reference",
+      "observed_failures": [],
+      "reproduced": true
+    },
+    {
+      "id": "CONTROL_DIRECT_REFERENCE",
+      "observed_failures": [
+        "cited path missing from staged set: references/missing.md — if this file belongs to another skill, cite it as `<skill-name>/references/missing.md`, which this check exempts"
+      ],
+      "control_passed": true
+    },
+    {
+      "id": "F03_MACOS_BASH_SYNTAX",
+      "expected": "documented bash snippet parses on native macOS bash",
+      "bash_version": "GNU bash, version 3.2.57(1)-release (x86_64-apple-darwin25)",
+      "returncode": 2,
+      "stderr": "/bin/bash: -c: line 9: syntax error near unexpected token `;;'\n/bin/bash: -c: line 9: `      *\"status: actioned\"*|*\"status: declined\"*|*\"status: superseded\"*) ;;'\n",
+      "reproduced": true
+    },
+    {
+      "id": "F04_ARCHIVE_OVERWRITE",
+      "test_scope": "isolated exact archival decision body",
+      "expected": "preserve pre-existing archive destination or refuse collision",
+      "observed": {
+        "returncode": 0,
+        "source_exists": false,
+        "archive_body": "---\nid: 1\ntitle: \"Resolved synthetic entry\"\nstatus: actioned\nresolved: 2000-01-01\n---\nACTIVE SYNTHETIC BODY\n",
+        "stderr": ""
+      },
+      "reproduced": true
+    },
+    {
+      "id": "F05_ARCHIVE_STATUS_SUBSTRING",
+      "test_scope": "isolated exact archival decision body",
+      "expected": "keep status open even with a stale resolved field",
+      "observed": {
+        "returncode": 0,
+        "source_exists": false,
+        "archive_body": "---\nid: 1\ntitle: \"Investigate status: actioned parsing\"\nstatus: open\nresolved: 2000-01-01\n---\nACTIVE SYNTHETIC BODY\n",
+        "stderr": ""
+      },
+      "reproduced": true
+    },
+    {
+      "id": "CONTROL_OPEN_ARCHIVE",
+      "observed": {
+        "returncode": 0,
+        "source_exists": true,
+        "archive_body": null,
+        "stderr": ""
+      },
+      "control_passed": true
+    },
+    {
+      "id": "KNOWN_PR119_MIGRATION",
+      "already_reported": "https://github.com/rebelytics/one-skill-to-rule-them-all/pull/119",
+      "returncode": 0,
+      "overwritten": true,
+      "floor_after": "7",
+      "reproduced": true
+    }
+  ]
+}

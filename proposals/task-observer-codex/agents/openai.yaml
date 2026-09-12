@@ -1,0 +1,4 @@
+interface:
+  display_name: "Task Observer — Codex Pilot"
+  short_description: "Capture evidence and stage scoped skill improvements"
+  default_prompt: "Use $task-observer-codex to review evidence from this task and propose scoped skill improvements."

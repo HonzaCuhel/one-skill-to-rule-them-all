@@ -1,0 +1,29 @@
+{
+  "checked_date": "2026-09-12",
+  "upstream_commit": "7518a858cf5b550bf3dc61b1b625f4cb0b5fa87f",
+  "existing_codex_fork_commit": "764d8ebea9c74c669eb8e0e98051300d499efbc9",
+  "source_sha256": {
+    "SKILL.md": "0b583fd636c956f863cbaeb1338233731f8a4b80af6435c52264cd7a59ec0f4c",
+    "scripts/migrate-log.py": "aa2f3a05eb9d79a7833ded4c22ea62e0855d0bf62f56c279823ff036035f8279",
+    "scripts/validate-skill-bundle.py": "5c17f68fcc636f3b083be7bd93f3012b553fac714ec8c1e7545b3bed47f6e5e1",
+    "references/skill-authoring.md": "5f90e6415cba89e9d7980c1eda377c9adcef4087eedbb2282670e48e8fc18f1d",
+    "references/environments.md": "b2226f31f45856ef3b320bd1e2647c7e74f8b5c3148d7bbcefbe904b5606ddac",
+    "references/weekly-review.md": "f82a04fdf3c551a582af27d54ee98e3d79948a2f4fd6fb22c11d56a82c5b9f2d"
+  },
+  "pilot_files": {
+    "SKILL.md": "f2a9d327c1515175c975a4d3a2e70b15a8cc00b15a57bc4e3ba1cf4402bb57e1",
+    "LICENSE.txt": "50bfbf25300f4b6c06f5c286bc9f63b2fe43a548233d633a6798a78a785bdb98",
+    "references/platforms.md": "b0e747d79832a9e1f92b413acc679f1fec4c7084b42c6e6de842d7186ce02acf",
+    "references/review.md": "e6d9246a7c03713062f099e11bda879c603cc870c8acca6800c44d741bb19a85",
+    "references/observations.md": "7cb1df937b444bccb22cead84cad2192fa87350dffbf99f54b283636a1fd840d",
+    "agents/openai.yaml": "dffe09a299c328909dfc9c292faaa86ccc7c449486b5af3427cfad546b04dab2"
+  },
+  "bundle_sha256": "9c542b64604769d9f0709d27546489386b71e13e0ed017a2aa23c4e2af9aae2d",
+  "validation": {
+    "pilot_description_chars": 309,
+    "relative_links_checked": 13,
+    "bundle_roundtrip": "all files and bytes match",
+    "behavioral_ab": "not run",
+    "fresh_install": "not run"
+  }
+}
