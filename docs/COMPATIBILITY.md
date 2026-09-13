@@ -8,7 +8,7 @@ Snapshot: 2026-09-13. Portable skill version 1.0.0; observation schema 1.
 | Codex project install | `.agents/skills/task-observer` | Isolated directory installation and byte/hash checks |
 | Claude Code project install | `.claude/skills/task-observer` | Same isolated installation and identical runtime bytes |
 | Python helper/installer | Python 3.8+, standard library | All 60 tests passed on macOS Python 3.11.8 and Linux Python 3.12.3; initial helper tests also ran on macOS Python 3.8.8 |
-| OS coverage | Linux, macOS, Windows on suitable local filesystems | Automated CI matrix; consult the linked run for actual result |
+| OS coverage | Linux, macOS, Windows on suitable local filesystems | Verified: 60/60 tests on each of Linux 3.8/3.12, macOS 3.12 and Windows 3.12, with no skips |
 | Other coding agents | Native skill reader plus Python/filesystem, or explicit handoff | Capability design only; no named third host certified |
 | Native agent activation | Fresh session reading actual installed source | Not yet independently verified on both native hosts |
 | Improved agent outcomes | Useful observations with acceptable false positives/overhead | No controlled comparative efficacy result yet |
@@ -30,3 +30,7 @@ The installer requires an absent destination and existing parent, rejects symlin
 For each native host: install in a clean temporary project, start a genuinely fresh session, explicitly invoke the skill, and verify the loaded source/version and a synthetic observation. Then run ordinary prompts without naming observation behavior to measure organic activation.
 
 For efficacy: freeze the observer, compare baseline and portable skill with the same model/tools/budget on held-out coding/research tasks, and independently score useful corrections, unsupported generalization, false observations, privacy boundary errors and overhead. Keep inference/personal-preference cases and no-observation controls. Report failed attempts and cost. Do not silently upgrade the model or run paid batches as an installation check.
+
+## Verified CI snapshot
+
+[Run 34730361737](https://github.com/HonzaCuhel/one-skill-to-rule-them-all/actions/runs/34730361737) passed on commit 3da3a4c. All four platform/interpreter jobs passed 60 tests with no skips, validated and installed the bundle, and produced identical 62,554-byte archives. The comparison job confirmed SHA-256 197c9c9f6de27bed898c3cba0537bb51a58858e19bea32c18d623d7cf6f954fc. This matches the locally built artifact. Independent reviews approved the validator and store after their reported defects were fixed.

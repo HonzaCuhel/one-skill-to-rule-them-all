@@ -14,7 +14,7 @@ Architecture: one root SKILL.md and on-demand shared references; host guidance i
 - [x] Provide one canonical build/install bundle from an explicit allowlist. Installation is explicit, refuses overwrites and excludes Git/history/proposals/private logs. Test clean Codex and Claude directory layouts in temporary projects and compare installed bytes.
 - [x] Write concise host adapters for native skill invocation, native instruction precedence and handoff when Python/filesystem/persistence is unavailable. Retain signal quality, deduplication, skill families, review/staging, attribution, privacy and behavioral evaluation guidance.
 - [x] Add CI on Linux/macOS/Windows for helper and bundle tests; local verification is reported separately from CI results. Update README/USER-GUIDE with actual commands and limits, preserved credit and the existing Codex port link.
-- [ ] Have independent reviewers inspect specification compliance and then code quality. Resolve actionable findings; execute final tests, inspect public diff and publish only the prepared changes to the user's fork.
+- [x] Have independent reviewers inspect specification compliance and then code quality. Resolve actionable findings; execute final tests, inspect public diff and publish only the prepared changes to the user's fork.
 
 ## Upstream coordination snapshot
 
@@ -27,3 +27,5 @@ No paid model batch, external-service deployment, global skill activation or aut
 ## Implementation verification
 
 2026-09-13: 60 tests passed on macOS Python 3.11.8 and Linux Python 3.12.3. The actual installed helpers in isolated Codex/Claude layouts shared one store, deduplicated an episode, preserved six lifecycle revisions and retained valid install receipts. The exact ten-file bundle passed the validator. See research/portable-validation.json. Native-host activation and comparative model efficacy remain unverified; CI publication results are tracked separately.
+
+Published to the user's fork main and working branch. CI run 34730361737 passed all four platform/interpreter jobs plus byte-for-byte bundle comparison. Independent validator/package/core reviews were completed and findings resolved. The proposed upstream validator PR and maintainer email remain unsent.

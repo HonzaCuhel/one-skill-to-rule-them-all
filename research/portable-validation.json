@@ -25,5 +25,19 @@
     "native host activation",
     "controlled model efficacy",
     "cross-machine synchronization (unsupported)"
-  ]
+  ],
+  "ci": {
+    "url": "https://github.com/HonzaCuhel/one-skill-to-rule-them-all/actions/runs/34730361737",
+    "code_commit": "3da3a4c9e8a42c2a120ee4341ff2638460e99cd1",
+    "result": "success",
+    "platforms": [
+      "Linux Python 3.8",
+      "Linux Python 3.12",
+      "macOS Python 3.12",
+      "Windows Python 3.12"
+    ],
+    "tests_per_job": 60,
+    "skipped_tests": 0,
+    "identical_bundles": true
+  }
 }
