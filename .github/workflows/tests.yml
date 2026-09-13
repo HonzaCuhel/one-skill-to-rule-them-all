@@ -33,3 +33,24 @@ jobs:
         with:
           name: task-observer-${{ matrix.os }}-py${{ matrix.python }}
           path: dist/task-observer.skill
+
+  compare-bundles:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: task-observer-*
+          path: artifacts
+      - name: Verify identical bundle bytes across all platforms
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          from pathlib import Path
+          bundles = sorted(Path("artifacts").glob("*/task-observer.skill"))
+          assert len(bundles) == 4, bundles
+          hashes = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in bundles}
+          for path, digest in hashes.items():
+              print(digest, path)
+          assert len(set(hashes.values())) == 1, "Platform bundles differ"
+          PY
