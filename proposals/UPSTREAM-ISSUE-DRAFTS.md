@@ -1,3 +1,5 @@
+> Historical draft from the initial audit. Updated 2026-09-13: Bash parsing is now reported as upstream issue #152; do not open a duplicate. Validator fixes are implemented in this fork. See docs/UPSTREAM-CHANGES.md for the current coordination snapshot. Nothing here has been sent.
+
 # Unsent upstream issue drafts
 
 These are local drafts against `7518a858cf5b550bf3dc61b1b625f4cb0b5fa87f`.

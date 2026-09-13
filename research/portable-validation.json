@@ -1,0 +1,29 @@
+{
+  "date": "2026-09-13",
+  "python": "3.11.8",
+  "platform": "Darwin",
+  "unit_tests": {
+    "validator": 31,
+    "store": 15,
+    "packaging": 14,
+    "total": 60,
+    "result": "passed"
+  },
+  "integration": {
+    "scope": "real installed helpers in temporary Codex/Claude directory layouts; no native agents invoked",
+    "same_runtime_bytes": true,
+    "same_event_key_same_record": true,
+    "cross_install_revision_updates": true,
+    "revisions_preserved": 6,
+    "receipt_valid_after_execution": true
+  },
+  "bundle": {
+    "bytes": 62554,
+    "sha256": "197c9c9f6de27bed898c3cba0537bb51a58858e19bea32c18d623d7cf6f954fc"
+  },
+  "unverified": [
+    "native host activation",
+    "controlled model efficacy",
+    "cross-machine synchronization (unsupported)"
+  ]
+}

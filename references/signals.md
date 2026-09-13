@@ -14,9 +14,9 @@ process with clear inputs, phases, outputs; the user describing a refined
 process ("I always do it this way"); a structured approach emerging
 naturally during work.
 
-When one fires, the observation's `proposes_skill:` list names the
-candidate by a working name. The observation may also list existing skills
-under `skill:` if the same insight improves them.
+For a new skill, use a working name in the capture target, such as
+`new:working-name`. Describe affected existing skills in related_variants;
+these are hypotheses to review, not automatic changes to every sibling.
 
 ## Signals for IMPROVING an existing skill
 

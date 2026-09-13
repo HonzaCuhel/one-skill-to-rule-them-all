@@ -1,23 +1,27 @@
 name: Release bundle
 on:
   release:
-    types: [created]
-
+    types: [published]
 permissions:
   contents: write
-
 jobs:
   bundle:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Build .skill bundle
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m unittest discover -s tests -v
+      - name: Validate and build canonical bundle
         run: |
-          mkdir -p /tmp/bundle/task-observer
-          cp SKILL.md /tmp/bundle/task-observer/
-          cp -r references scripts /tmp/bundle/task-observer/
-          python3 scripts/validate-skill-bundle.py /tmp/bundle/task-observer --pack /tmp/bundle/task-observer.skill
+          mkdir dist
+          python scripts/package_skill.py install --destination "$PWD/dist/task-observer"
+          python scripts/validate-skill-bundle.py "$PWD/dist/task-observer"
+          python scripts/package_skill.py build --output "$PWD/dist/task-observer.skill"
       - name: Attach to release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload "${{ github.event.release.tag_name }}" /tmp/bundle/task-observer.skill --clobber --repo "$GITHUB_REPOSITORY"
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$RELEASE_TAG" dist/task-observer.skill --repo "$GITHUB_REPOSITORY"

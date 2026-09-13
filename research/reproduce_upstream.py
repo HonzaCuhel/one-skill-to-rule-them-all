@@ -2,7 +2,9 @@
 """Bounded synthetic reproductions; never touches installed skills or real logs.
 
 Run with Python 3. Every mutation is inside a TemporaryDirectory. A successful
-reproduction is evidence of current behavior, not a passing quality gate.
+reproduction is evidence of the pinned upstream behavior, not a passing quality gate.
+The native Bash regression is specific to macOS Bash 3.2. The pinned sources
+are materialized from Git so this remains runnable after portable rewrites.
 """
 import hashlib
 import importlib.util
@@ -14,7 +16,8 @@ import subprocess
 import sys
 import tempfile
 
-ROOT = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[1]
+ROOT = REPO
 PIN = "7518a858cf5b550bf3dc61b1b625f4cb0b5fa87f"
 sys.dont_write_bytecode = True
 
@@ -23,10 +26,10 @@ def run(args, **kw):
     return subprocess.run(args, text=True, capture_output=True, timeout=20, **kw)
 
 
-def main():
+def run_reproductions():
     sources = ["SKILL.md", "scripts/migrate-log.py", "scripts/validate-skill-bundle.py"]
     for name in sources:
-        expected = subprocess.check_output(["git", "show", f"{PIN}:{name}"], cwd=ROOT)
+        expected = subprocess.check_output(["git", "show", f"{PIN}:{name}"], cwd=REPO)
         if expected != (ROOT / name).read_bytes():
             raise SystemExit(f"Source differs from audited pin: {name}")
     spec = importlib.util.spec_from_file_location("upstream_validator", ROOT / sources[2])
@@ -111,6 +114,17 @@ def main():
     report = {"upstream_commit": PIN, "python": sys.version.split()[0], "platform": platform.platform(), "scope": "synthetic local repros only; no live agent efficacy evaluation", "source_sha256": {p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in sources}, "results": results}
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0 if all(r.get("control_passed", r.get("reproduced", False)) for r in results) else 1
+
+def main():
+    global ROOT
+    with tempfile.TemporaryDirectory(prefix="observer-pinned-source-") as directory:
+        ROOT = Path(directory)
+        for name in ["SKILL.md", "scripts/migrate-log.py", "scripts/validate-skill-bundle.py"]:
+            content = subprocess.check_output(["git", "show", f"{PIN}:{name}"], cwd=REPO)
+            target = ROOT / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(content)
+        return run_reproductions()
 
 
 if __name__ == "__main__":

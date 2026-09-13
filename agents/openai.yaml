@@ -1,0 +1,4 @@
+interface:
+  display_name: "Task Observer"
+  short_description: "Improve coding skills from scoped task evidence"
+  default_prompt: "Use $task-observer to capture reusable evidence from this task and stage scoped skill improvements."
